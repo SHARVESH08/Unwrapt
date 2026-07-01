@@ -1,0 +1,28 @@
+node_modules
+dist
+dist-ssr
+*.local
+.env
+.env.*
+!.env.example
+
+# editor / os
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# default audio binaries (drop your own royalty-free tracks; not committed)
+public/assets/audio/*.mp3
+
+# throwaway design labs (not part of the app)
+palette-lab/
+faq-lab/
+
+# internal design spec (not needed to run the site)
+hosted-gift-builder-spec.md

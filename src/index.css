@@ -1,0 +1,404 @@
+@import "tailwindcss";
+
+/*
+  ------------------------------------------------------------------
+  THEME TOKENS
+  ------------------------------------------------------------------
+  Colours are never hard-coded in components. Every component reads
+  semantic tokens (bg, surface, accent, etc). Those tokens point at
+  CSS variables, and the variables are re-defined for each chapter
+  via the `data-round="N"` attribute on <html>. Switching the number
+  restyles the whole app, with a gentle cross-fade.
+*/
+@theme inline {
+  --color-bg: var(--c-bg);
+  --color-bg-soft: var(--c-bg-soft);
+  --color-surface: var(--c-surface);
+  --color-text: var(--c-text);
+  --color-text-soft: var(--c-text-soft);
+  --color-accent: var(--c-accent);
+  --color-accent-2: var(--c-accent-2);
+  --color-border: var(--c-border);
+  --color-glow: var(--c-glow);
+
+  /* Indirection (like the colours) so a scope can swap the typeface. */
+  --font-display: var(--f-display);
+  --font-body: var(--f-body);
+}
+
+/* Player / gift experience keeps its romantic serif voice. */
+:root {
+  --f-display: "Cormorant Garamond", ui-serif, Georgia, serif;
+  --f-body: "Nunito Sans", ui-sans-serif, system-ui, sans-serif;
+}
+
+/*
+  ------------------------------------------------------------------
+  APP SHELL  (the giver-facing site: landing, receive, dashboard,
+  builder). The "Plasma" identity — a bright, electric, dramatic dark
+  canvas with magenta-pink + violet energy. Wrapping a page in
+  `.app-shell` re-skins every token-driven component at once.
+  ------------------------------------------------------------------
+*/
+.app-shell {
+  --f-display: "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;
+  --f-body: "Instrument Sans", ui-sans-serif, system-ui, sans-serif;
+
+  --c-bg: #140d20;
+  --c-bg-soft: #241638;
+  --c-surface: #281a44;
+  --c-text: #f6efff;
+  --c-text-soft: #c9b6e6;
+  --c-accent: #d96bff;
+  --c-accent-2: #5b8cff;
+  --c-border: #3d2a5e;
+  --c-glow: rgba(217, 107, 255, 0.45);
+
+  background-color: var(--c-bg);
+  color: var(--c-text);
+}
+
+/*
+  The eight chapter palettes — "Lumina Rose" expanded into a cohesive
+  bright-twilight-aurora arc. Each chapter keeps a lifted indigo/violet
+  canvas with luminous accents, but shifts hue and energy across the
+  emotional arc: rose dawn -> celebratory -> tender -> deep -> crescendo.
+*/
+:root,
+[data-round="1"] {
+  /* rose dawn — the anchor Lumina Rose */
+  --c-bg: #141538;
+  --c-bg-soft: #22245e;
+  --c-surface: #272a68;
+  --c-text: #f7eeff;
+  --c-text-soft: #cdbce8;
+  --c-accent: #ff9ec9;
+  --c-accent-2: #6fe6e0;
+  --c-border: #3a3d82;
+  --c-glow: rgba(255, 158, 201, 0.4);
+}
+
+[data-round="2"] {
+  /* coral sunrise — peach warmth + sky cyan */
+  --c-bg: #1a1140;
+  --c-bg-soft: #2a1a5a;
+  --c-surface: #301f64;
+  --c-text: #fceeff;
+  --c-text-soft: #d6bce6;
+  --c-accent: #ff9a8f;
+  --c-accent-2: #7fd6ff;
+  --c-border: #43308a;
+  --c-glow: rgba(255, 154, 143, 0.4);
+}
+
+[data-round="3"] {
+  /* magenta bloom — celebratory pink + warm gold */
+  --c-bg: #1d0f3a;
+  --c-bg-soft: #2f1656;
+  --c-surface: #361a64;
+  --c-text: #fbeaff;
+  --c-text-soft: #d9aee6;
+  --c-accent: #ff6bd6;
+  --c-accent-2: #ffd479;
+  --c-border: #4a2576;
+  --c-glow: rgba(255, 107, 214, 0.42);
+}
+
+[data-round="4"] {
+  /* violet glow — luminous violet + cyan */
+  --c-bg: #160f3e;
+  --c-bg-soft: #241a60;
+  --c-surface: #2a1f70;
+  --c-text: #f1ecff;
+  --c-text-soft: #c4b6ee;
+  --c-accent: #b07bff;
+  --c-accent-2: #6fe6e0;
+  --c-border: #382a82;
+  --c-glow: rgba(176, 123, 255, 0.42);
+}
+
+[data-round="5"] {
+  /* aqua twilight — mint/aqua + rose */
+  --c-bg: #0f1a3e;
+  --c-bg-soft: #163059;
+  --c-surface: #1a386a;
+  --c-text: #ecf6ff;
+  --c-text-soft: #aacfe6;
+  --c-accent: #5cf0d0;
+  --c-accent-2: #ff9ec9;
+  --c-border: #225084;
+  --c-glow: rgba(92, 240, 208, 0.4);
+}
+
+[data-round="6"] {
+  /* periwinkle dream — electric blue + lilac */
+  --c-bg: #101748;
+  --c-bg-soft: #1b2870;
+  --c-surface: #1f2d80;
+  --c-text: #eef0ff;
+  --c-text-soft: #b3bdee;
+  --c-accent: #7c9bff;
+  --c-accent-2: #d6a6ff;
+  --c-border: #2e3a92;
+  --c-glow: rgba(124, 155, 255, 0.42);
+}
+
+[data-round="7"] {
+  /* deep violet night — bright violet + pink */
+  --c-bg: #15093a;
+  --c-bg-soft: #260f56;
+  --c-surface: #2c1364;
+  --c-text: #f4ecff;
+  --c-text-soft: #c9aee6;
+  --c-accent: #c46bff;
+  --c-accent-2: #ff8fb8;
+  --c-border: #43217a;
+  --c-glow: rgba(196, 107, 255, 0.42);
+}
+
+[data-round="8"] {
+  /* radiant finale — magenta-rose + rose-gold */
+  --c-bg: #1e0c34;
+  --c-bg-soft: #34134e;
+  --c-surface: #3c1659;
+  --c-text: #fff0fb;
+  --c-text-soft: #e6b0d8;
+  --c-accent: #ff7cc6;
+  --c-accent-2: #ffcf7a;
+  --c-border: #57206e;
+  --c-glow: rgba(255, 124, 198, 0.46);
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  /* The gentle palette cross-fade between chapters. */
+  transition:
+    background-color 1.5s ease,
+    color 1.5s ease;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1,
+h2,
+h3,
+.font-display {
+  font-family: var(--font-display);
+}
+
+/*
+  ------------------------------------------------------------------
+  AMBIENT BACKDROP — a richer multi-point aurora mesh that drifts
+  slowly behind every scene. Built from the active palette's accent
+  glow so it repaints with each chapter.
+  ------------------------------------------------------------------
+*/
+.scene-backdrop {
+  background:
+    radial-gradient(40% 50% at 18% 16%, var(--c-glow) 0%, transparent 55%),
+    radial-gradient(
+      36% 44% at 82% 78%,
+      color-mix(in srgb, var(--c-accent-2) 55%, transparent) 0%,
+      transparent 50%
+    ),
+    radial-gradient(
+      48% 40% at 60% 8%,
+      color-mix(in srgb, var(--c-accent) 35%, transparent) 0%,
+      transparent 60%
+    );
+  opacity: 0.6;
+  transition: background 1.5s ease;
+}
+
+/* A drifting, breathing version of the mesh for full-bleed hero scenes. */
+.aurora-mesh {
+  position: absolute;
+  inset: -20%;
+  background:
+    radial-gradient(28% 32% at 20% 24%, var(--c-glow) 0%, transparent 60%),
+    radial-gradient(
+      26% 30% at 78% 70%,
+      color-mix(in srgb, var(--c-accent-2) 60%, transparent) 0%,
+      transparent 58%
+    ),
+    radial-gradient(
+      30% 34% at 60% 90%,
+      color-mix(in srgb, var(--c-accent) 45%, transparent) 0%,
+      transparent 62%
+    );
+  filter: blur(40px) saturate(1.15);
+  animation: mesh-drift 26s ease-in-out infinite alternate;
+}
+
+@keyframes mesh-drift {
+  0% {
+    transform: translate3d(-3%, -2%, 0) scale(1.05) rotate(0deg);
+  }
+  50% {
+    transform: translate3d(3%, 2%, 0) scale(1.12) rotate(2deg);
+  }
+  100% {
+    transform: translate3d(-2%, 3%, 0) scale(1.05) rotate(-2deg);
+  }
+}
+
+/*
+  Frosted glass surface used by the redesigned cards. Reads from the
+  surface + border tokens so it stays on-palette in every chapter.
+*/
+.glass-card {
+  background: color-mix(in srgb, var(--c-surface) 70%, transparent);
+  border: 1px solid color-mix(in srgb, var(--c-border) 80%, transparent);
+  backdrop-filter: blur(14px) saturate(1.2);
+  -webkit-backdrop-filter: blur(14px) saturate(1.2);
+  box-shadow:
+    0 30px 70px -34px var(--c-glow),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.06);
+}
+
+/* Gradient accent text (display headings, finale flourishes). */
+.text-gradient-accent {
+  background-image: linear-gradient(
+    100deg,
+    var(--c-accent) 0%,
+    var(--c-accent-2) 60%,
+    var(--c-accent) 100%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: gradient-pan 6s linear infinite;
+}
+
+@keyframes gradient-pan {
+  to {
+    background-position: 200% center;
+  }
+}
+
+/* Animated conic glow ring — used on CTAs / the hero gift caption. */
+.beam-ring {
+  position: relative;
+}
+.beam-ring::before {
+  content: "";
+  position: absolute;
+  inset: -1.5px;
+  border-radius: inherit;
+  padding: 1.5px;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    var(--c-accent) 80deg,
+    var(--c-accent-2) 160deg,
+    transparent 240deg
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: beam-spin 4s linear infinite;
+  pointer-events: none;
+}
+@keyframes beam-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Film grain — a fixed, pointer-events-none overlay to remove digital sterility.
+ * Applied to a single page-level element so it never repaints on scroll. */
+.grain::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+  opacity: 0.04;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Marquee track — duplicate its children once; it scrolls exactly one copy. */
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee 38s linear infinite;
+}
+.marquee-track:hover {
+  animation-play-state: paused;
+}
+@keyframes marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* Shimmer sweep used by glowing photo frames. */
+@keyframes shimmer-sweep {
+  0% {
+    transform: translateX(-120%) skewX(-12deg);
+  }
+  100% {
+    transform: translateX(220%) skewX(-12deg);
+  }
+}
+
+.shimmer-sweep {
+  animation: shimmer-sweep 3.2s ease-in-out infinite;
+}
+
+@keyframes soft-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 var(--c-glow);
+  }
+  50% {
+    box-shadow: 0 0 38px 6px var(--c-glow);
+  }
+}
+
+.soft-pulse {
+  animation: soft-pulse 3.4s ease-in-out infinite;
+}
+
+/* Hide scrollbars for a cleaner cinematic feel, keep scroll working. */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--c-border) transparent;
+}
+
+::selection {
+  background: var(--c-accent);
+  color: var(--c-surface);
+}
+
+/* A preview "screen" that re-establishes the player's romantic voice (serif +
+ * the chapter palette set via data-round) when shown inside the bright shell. */
+.gift-screen {
+  --f-display: "Cormorant Garamond", ui-serif, Georgia, serif;
+  --f-body: "Nunito Sans", ui-sans-serif, system-ui, sans-serif;
+  background-color: var(--c-bg);
+  color: var(--c-text);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aurora-mesh,
+  .text-gradient-accent,
+  .beam-ring::before,
+  .shimmer-sweep,
+  .soft-pulse,
+  .marquee-track {
+    animation: none !important;
+  }
+}
