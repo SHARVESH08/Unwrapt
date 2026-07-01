@@ -26,3 +26,5 @@ faq-lab/
 
 # internal design spec (not needed to run the site)
 hosted-gift-builder-spec.md
+
+.vercel
