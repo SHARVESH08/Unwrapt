@@ -85,6 +85,7 @@ export function Landing() {
       <Nav />
       <Hero />
       <Highlights />
+      <Banner />
       <HowItWorks />
       <Demo />
       <Games />
@@ -102,9 +103,16 @@ export function Landing() {
 function Nav() {
   return (
     <nav className="sticky top-0 z-50 flex h-[68px] items-center justify-between border-b border-border/70 bg-bg/65 px-6 backdrop-blur-xl md:px-10">
-      <span className="font-display text-xl font-extrabold tracking-tight text-text">
-        Unwrapt
-      </span>
+      <Link to="/" className="flex items-center gap-2.5" aria-label="Unwrapt home">
+        <img
+          src="/brand/logo.jpeg"
+          alt=""
+          className="h-9 w-9 rounded-lg object-cover ring-1 ring-border/60"
+        />
+        <span className="font-display text-xl font-extrabold tracking-tight text-text">
+          Unwrapt
+        </span>
+      </Link>
       <div className="flex items-center gap-1 sm:gap-3">
         <Link
           to="/receive"
@@ -218,6 +226,32 @@ function Highlights() {
   );
 }
 
+/* -------------------------------------------------------------- Banner ---- */
+
+function Banner() {
+  const reduce = useReducedMotion();
+  return (
+    <section className="mx-auto max-w-[1400px] px-6 pt-10 md:px-10 md:pt-14">
+      <Reveal>
+        <div className="w-full overflow-hidden rounded-[2rem] border border-border shadow-[0_40px_100px_-40px_var(--c-glow)]">
+          <video
+            className="block w-full"
+            autoPlay={!reduce}
+            loop
+            muted
+            playsInline
+            controls={!!reduce}
+            preload="metadata"
+            aria-label="Unwrapt gift adventure preview"
+          >
+            <source src="/brand/banner.mp4" type="video/mp4" />
+          </video>
+        </div>
+      </Reveal>
+    </section>
+  );
+}
+
 /* -------------------------------------------------------- How it works ---- */
 
 const BEATS = [
@@ -290,6 +324,51 @@ function Demo() {
 /* --------------------------------------------------------------- Games ---- */
 
 function Games() {
+  const gridRef = useRef<HTMLDivElement>(null);
+  const reduce = useReducedMotion();
+
+  // Interactive bento: each tile tilts toward the cursor (3D) and lights a
+  // glow that tracks the pointer. quickTo keeps it off the React render loop.
+  useGSAP(
+    (_context, contextSafe) => {
+      if (reduce || !contextSafe) return;
+      const tiles = gsap.utils.toArray<HTMLElement>(".game-tile");
+      const cleanups: Array<() => void> = [];
+      tiles.forEach((tile) => {
+        gsap.set(tile, { transformPerspective: 900, transformOrigin: "center" });
+        const rotY = gsap.quickTo(tile, "rotationY", { duration: 0.6, ease: "power3" });
+        const rotX = gsap.quickTo(tile, "rotationX", { duration: 0.6, ease: "power3" });
+        const move = contextSafe((e: PointerEvent) => {
+          const r = tile.getBoundingClientRect();
+          const px = (e.clientX - r.left) / r.width;
+          const py = (e.clientY - r.top) / r.height;
+          rotY((px - 0.5) * 10);
+          rotX((0.5 - py) * 10);
+          tile.style.setProperty("--mx", `${px * 100}%`);
+          tile.style.setProperty("--my", `${py * 100}%`);
+        });
+        const enter = contextSafe(() => {
+          gsap.to(tile, { scale: 1.03, duration: 0.4, ease: "power3" });
+        });
+        const leave = contextSafe(() => {
+          rotY(0);
+          rotX(0);
+          gsap.to(tile, { scale: 1, duration: 0.5, ease: "power3" });
+        });
+        tile.addEventListener("pointermove", move);
+        tile.addEventListener("pointerenter", enter);
+        tile.addEventListener("pointerleave", leave);
+        cleanups.push(() => {
+          tile.removeEventListener("pointermove", move);
+          tile.removeEventListener("pointerenter", enter);
+          tile.removeEventListener("pointerleave", leave);
+        });
+      });
+      return () => cleanups.forEach((fn) => fn());
+    },
+    { scope: gridRef, dependencies: [reduce] },
+  );
+
   return (
     <section className="mx-auto max-w-[1400px] px-6 py-24 md:px-10 md:py-28">
       <Reveal>
@@ -301,11 +380,14 @@ function Games() {
         </p>
       </Reveal>
 
-      <div className="mt-12 grid auto-rows-[150px] grid-cols-2 gap-4 md:grid-cols-4">
+      <div
+        ref={gridRef}
+        className="mt-12 grid auto-rows-[150px] grid-cols-2 gap-4 md:grid-cols-4"
+      >
         {/* Big feature cell with a brand gradient wash. */}
         <Reveal className="col-span-2 row-span-2">
           <article
-            className="relative flex h-full flex-col justify-end overflow-hidden rounded-3xl border border-border p-6"
+            className="game-tile relative flex h-full flex-col justify-end overflow-hidden rounded-3xl border border-border p-6"
             style={{ background: "linear-gradient(150deg, color-mix(in srgb, var(--c-accent) 32%, var(--c-surface)), var(--c-surface))" }}
           >
             <div
@@ -325,7 +407,7 @@ function Games() {
 
         {/* Wide cell with electric-blue accent line. */}
         <Reveal className="col-span-2">
-          <article className="glass-card relative flex h-full flex-col justify-center overflow-hidden rounded-3xl p-6">
+          <article className="game-tile glass-card relative flex h-full flex-col justify-center overflow-hidden rounded-3xl p-6">
             <span className="absolute left-0 top-0 h-full w-1 bg-accent-2" />
             <Brain size={22} className="mb-2 text-accent" strokeWidth={1.9} />
             <h3 className="font-display text-xl font-bold text-text">Trivia about the two of you</h3>
@@ -339,7 +421,7 @@ function Games() {
         {/* Wide violet gradient block. */}
         <Reveal className="col-span-2">
           <article
-            className="relative flex h-full flex-col justify-center overflow-hidden rounded-3xl border border-border p-6"
+            className="game-tile relative flex h-full flex-col justify-center overflow-hidden rounded-3xl border border-border p-6"
             style={{ background: "linear-gradient(120deg, var(--c-accent), var(--c-accent-2))" }}
           >
             <Sparkles size={22} className="mb-2 text-bg" strokeWidth={2} />
@@ -358,7 +440,7 @@ function Games() {
 function GameTile({ icon: Icon, title }: { icon: typeof Search; title: string }) {
   return (
     <Reveal>
-      <article className="glass-card flex h-full flex-col justify-center rounded-3xl p-5">
+      <article className="game-tile glass-card flex h-full flex-col justify-center rounded-3xl p-5">
         <Icon size={20} className="mb-2 text-accent" strokeWidth={1.9} />
         <h3 className="font-display text-lg font-bold leading-tight text-text">{title}</h3>
       </article>
@@ -538,8 +620,14 @@ function Closing() {
 function Footer() {
   return (
     <footer className="border-t border-border px-6 py-10 text-center md:px-10">
-      <p className="font-display text-lg font-bold text-text">Unwrapt</p>
-      <p className="mt-1 font-body text-xs text-text-soft">
+      <img
+        src="/brand/logo-wordmark.jpeg"
+        alt="Unwrapt, playable gift adventures"
+        loading="lazy"
+        decoding="async"
+        className="mx-auto w-40 rounded-2xl shadow-[0_0_60px_-16px_var(--c-glow)] md:w-44"
+      />
+      <p className="mt-5 font-body text-xs text-text-soft">
         Made for the people worth the effort.
       </p>
     </footer>

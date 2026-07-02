@@ -402,3 +402,41 @@ h3,
     animation: none !important;
   }
 }
+
+/*
+  Interactive bento tiles (Games section). GSAP drives a 3D tilt on the
+  tile transform; this layer adds a cursor-tracking glow that reads from
+  the active chapter's accent, so it stays on-palette in every scene.
+*/
+.game-tile {
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+.game-tile::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  background: radial-gradient(
+    18rem 18rem at var(--mx, 50%) var(--my, 50%),
+    color-mix(in srgb, var(--c-glow) 65%, transparent),
+    transparent 60%
+  );
+  mix-blend-mode: screen;
+  z-index: 2;
+}
+.game-tile:hover::after {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .game-tile {
+    transform: none !important;
+  }
+  .game-tile::after {
+    display: none;
+  }
+}
