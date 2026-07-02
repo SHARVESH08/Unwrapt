@@ -82,6 +82,7 @@ export function Landing() {
       <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
         <div className="aurora-mesh opacity-60" />
       </div>
+      <BrandIntro />
       <Nav />
       <Hero />
       <Highlights />
@@ -95,6 +96,55 @@ export function Landing() {
       <Closing />
       <Footer />
     </div>
+  );
+}
+
+/* --------------------------------------------------------- Brand intro ---- */
+
+/* A one-time brand curtain: the wordmark greets the visitor, then lifts to
+ * reveal the page. Shown once per session; skipped entirely under reduced
+ * motion. Click anywhere to dismiss early. */
+function BrandIntro() {
+  const reduce = useReducedMotion();
+  const [show, setShow] = useState(false);
+
+  useEffect(() => {
+    if (reduce) return;
+    if (sessionStorage.getItem("unwrapt-intro")) return;
+    sessionStorage.setItem("unwrapt-intro", "1");
+    setShow(true);
+    const t = setTimeout(() => setShow(false), 1900);
+    return () => clearTimeout(t);
+  }, [reduce]);
+
+  return (
+    <AnimatePresence>
+      {show && (
+        <motion.div
+          key="intro"
+          className="fixed inset-0 z-[70] flex items-center justify-center bg-bg"
+          initial={{ opacity: 1 }}
+          exit={{ opacity: 0, transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] } }}
+          onClick={() => setShow(false)}
+        >
+          <div className="pointer-events-none absolute inset-0 overflow-hidden">
+            <div className="aurora-mesh opacity-50" />
+          </div>
+          <motion.img
+            src="/brand/logo-wordmark.jpeg"
+            alt="Unwrapt, playable gift adventures"
+            initial={{ opacity: 0, scale: 0.86, y: 8 }}
+            animate={{
+              opacity: 1,
+              scale: 1,
+              y: 0,
+              transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] },
+            }}
+            className="relative w-64 rounded-3xl shadow-[0_0_90px_-10px_var(--c-glow)] md:w-80"
+          />
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 }
 
@@ -327,33 +377,42 @@ function Games() {
   const gridRef = useRef<HTMLDivElement>(null);
   const reduce = useReducedMotion();
 
-  // Interactive bento: each tile tilts toward the cursor (3D) and lights a
-  // glow that tracks the pointer. quickTo keeps it off the React render loop.
+  // Interactive bento "ignite": on hover a neon conic border lights up and
+  // spins, the icon floats toward the cursor (parallax) with a springy pop,
+  // and a soft glow tracks the pointer. quickTo keeps it off React's render loop.
   useGSAP(
     (_context, contextSafe) => {
       if (reduce || !contextSafe) return;
       const tiles = gsap.utils.toArray<HTMLElement>(".game-tile");
       const cleanups: Array<() => void> = [];
       tiles.forEach((tile) => {
-        gsap.set(tile, { transformPerspective: 900, transformOrigin: "center" });
-        const rotY = gsap.quickTo(tile, "rotationY", { duration: 0.6, ease: "power3" });
-        const rotX = gsap.quickTo(tile, "rotationX", { duration: 0.6, ease: "power3" });
+        const icon = tile.querySelector<SVGElement>("svg");
+        if (icon) gsap.set(icon, { transformOrigin: "center" });
+        const ix = icon ? gsap.quickTo(icon, "x", { duration: 0.5, ease: "power3" }) : null;
+        const iy = icon ? gsap.quickTo(icon, "y", { duration: 0.5, ease: "power3" }) : null;
         const move = contextSafe((e: PointerEvent) => {
           const r = tile.getBoundingClientRect();
           const px = (e.clientX - r.left) / r.width;
           const py = (e.clientY - r.top) / r.height;
-          rotY((px - 0.5) * 10);
-          rotX((0.5 - py) * 10);
+          ix?.((px - 0.5) * 26);
+          iy?.((py - 0.5) * 26);
           tile.style.setProperty("--mx", `${px * 100}%`);
           tile.style.setProperty("--my", `${py * 100}%`);
         });
         const enter = contextSafe(() => {
-          gsap.to(tile, { scale: 1.03, duration: 0.4, ease: "power3" });
+          gsap.to(tile, { y: -6, scale: 1.02, duration: 0.45, ease: "power3" });
+          if (icon)
+            gsap.fromTo(
+              icon,
+              { scale: 1, rotate: 0 },
+              { scale: 1.18, rotate: -6, duration: 0.55, ease: "back.out(2.2)" },
+            );
         });
         const leave = contextSafe(() => {
-          rotY(0);
-          rotX(0);
-          gsap.to(tile, { scale: 1, duration: 0.5, ease: "power3" });
+          ix?.(0);
+          iy?.(0);
+          gsap.to(tile, { y: 0, scale: 1, duration: 0.5, ease: "power3" });
+          if (icon) gsap.to(icon, { scale: 1, rotate: 0, duration: 0.4, ease: "power3" });
         });
         tile.addEventListener("pointermove", move);
         tile.addEventListener("pointerenter", enter);
