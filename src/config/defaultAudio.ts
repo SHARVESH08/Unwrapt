@@ -1,31 +1,31 @@
 /* The bundled default audio library.
  *
  * Givers can ship sound with zero effort by referencing "default:<name>".
- * The default tracks are CC0 (public-domain) solo-piano recordings from Musopen,
- * hotlinked from Wikimedia Commons (which serves them with open CORS), so no
- * heavy audio lives in the repo. If a URL ever fails, playback simply stays
- * silent and the player never breaks. A custom track is any other string: a
- * direct URL, or a resolved Drive link. */
+ * The default tracks are public-domain recordings (ragtime piano rolls and
+ * US military band performances), hotlinked from Wikimedia Commons (which
+ * serves them with open CORS), so no heavy audio lives in the repo. If a URL
+ * ever fails, playback simply stays silent and the player never breaks. A
+ * custom track is any other string: a direct URL, or a resolved Drive link. */
 
 import type { Occasion } from "../types/gift";
 
 export const DEFAULT_AUDIO: Record<string, string> = {
-  // Background loops, one distinct piece per occasion (see defaultAudioForOccasion).
-  "soft-loop": // Chopin, Impromptu No. 2 (gentle, generic/custom fallback)
-    "https://upload.wikimedia.org/wikipedia/commons/1/1e/Impromptu_no._2_-_Op._36.mp3",
-  "birthday-loop": // Chopin, Grande Valse Brillante (joyful waltz)
-    "https://upload.wikimedia.org/wikipedia/commons/7/77/Grande_Valse_Brilliante_Op.18_In_E_flat_major.mp3",
-  "anniversary-loop": // Chopin, Fantaisie-Impromptu (romantic)
-    "https://upload.wikimedia.org/wikipedia/commons/2/2b/Fantaisie_Impromptu_Op._66.mp3",
-  "proposal-loop": // Chopin, Ballade No. 1 (builds to a swell)
-    "https://upload.wikimedia.org/wikipedia/commons/1/1b/Ballade_no._1_-_Op._23.mp3",
-  "justbecause-loop": // Chopin, Impromptu No. 1 (light, sweet)
-    "https://upload.wikimedia.org/wikipedia/commons/9/9a/Impromptu_no._1_-_Op._29.mp3",
+  // Background loops, one distinct upbeat piece per occasion (see defaultAudioForOccasion).
+  "soft-loop": // Brahms, Hungarian Dance No. 1 (lively, generic/custom fallback)
+    "https://upload.wikimedia.org/wikipedia/commons/2/23/Hungarian_Dance_No._1_-_Strolling_Strings_-_United_States_Air_Force_Band.mp3",
+  "birthday-loop": // Joplin, The Entertainer (cheerful ragtime)
+    "https://upload.wikimedia.org/wikipedia/commons/6/6d/Scott_Joplin_-_04_-_The_Entertainer_1902_piano_roll.mp3",
+  "anniversary-loop": // Strauss, The Blue Danube (celebratory waltz)
+    "https://upload.wikimedia.org/wikipedia/commons/d/d4/%22An_der_sch%C3%B6nen%2C_blauen_Donau%22_performed_by_the_U.S._Marine_Band.mp3",
+  "proposal-loop": // Pachelbel, Canon in D (warm, builds)
+    "https://upload.wikimedia.org/wikipedia/commons/1/12/Canon_%282004%29_-_Strolling_Strings_-_United_States_Air_Force_Band.mp3",
+  "justbecause-loop": // Joplin, Maple Leaf Rag (playful ragtime)
+    "https://upload.wikimedia.org/wikipedia/commons/5/57/Maple_Leaf_Rag_-_Strolling_Strings_-_United_States_Air_Force_Band.mp3",
   // Finale endings.
-  "warm-ending": // Chopin, Mazurka Op. 17 No. 3 (tender resolution)
-    "https://upload.wikimedia.org/wikipedia/commons/8/8d/Mazurka_Op._17_no._3_in_A_flat_major.mp3",
-  "love-ending": // Chopin, Ballade No. 4 (emotional swell)
-    "https://upload.wikimedia.org/wikipedia/commons/2/2f/Ballade_no._4_-_Op._52.mp3",
+  "warm-ending": // Chabrier, Espana (festive finish)
+    "https://upload.wikimedia.org/wikipedia/commons/2/25/Espana_-_Strolling_Strings_-_United_States_Air_Force_Band.mp3",
+  "love-ending": // Brahms, Hungarian Dance No. 4 (emotional swell)
+    "https://upload.wikimedia.org/wikipedia/commons/6/6a/Hungarian_Dance_No._4_-_Strolling_Strings_-_United_States_Air_Force_Band.mp3",
 };
 
 const DEFAULT_PREFIX = "default:";
