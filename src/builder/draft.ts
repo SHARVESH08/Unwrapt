@@ -12,6 +12,7 @@ import type {
 import { DEFAULT_ADVENTURE_SETTINGS } from "../types/gift";
 import { SAMPLE_GIFT } from "../config/sampleGift";
 import { normalizeImageLink } from "../lib/drive";
+import { defaultAudioForOccasion } from "../config/defaultAudio";
 
 export type GiftDraft = {
   occasion: Occasion;
@@ -130,7 +131,11 @@ export function draftToInput(draft: GiftDraft): Omit<
       photoUrls,
       finalePhotos,
       audio: {
-        loop: draft.media.audio.loop,
+        // An untouched default loop becomes the occasion's own song.
+        loop:
+          draft.media.audio.loop === "default:soft-loop"
+            ? defaultAudioForOccasion(draft.occasion).loop
+            : draft.media.audio.loop,
         normalEnding: draft.media.audio.normalEnding,
         specialEnding: isProposal ? draft.media.audio.specialEnding : undefined,
       },
